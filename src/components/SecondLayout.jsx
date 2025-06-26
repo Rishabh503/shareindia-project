@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Volume2, Mic, Zap, Heart, Star, Play, Users, Award, Clock } from "lucide-react";
+import { SETTINGS } from "../lib/data";
 
 const Layout = () => {
   const [data, setData] = useState("");
@@ -23,6 +24,12 @@ const Layout = () => {
     synth.speak(utterance);
     setData("");
   };
+const [settings, setSettings] = useState(null);
+
+useEffect(() => {
+  // Simulate API load
+  setSettings(SETTINGS);
+}, []);
 
   const features = [
     {
@@ -142,86 +149,65 @@ const Layout = () => {
               </h2>
               <p className="text-gray-400">Customize your voice settings and convert your text to natural speech</p>
             </div>
+<form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div>
+            <label className="block mb-1">Mood</label>
+            <select className="w-full p-2 text-black rounded">
+              <option value="">Select Mood</option>
+              {settings && Object.entries(settings.mood).map(([key, value]) => (
+                <option key={key} value={key}>{value}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1">Language</label>
+            <select className="w-full p-2 text-black rounded">
+              <option value="">Select Language</option>
+              {settings && Object.entries(settings.language).map(([key, value]) => (
+                <option key={key} value={key}>{value}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1">Speaker</label>
+            <select className="w-full p-2 text-black rounded">
+              <option value="">Select Speaker</option>
+              {settings && Object.entries(settings.speaker).map(([key, value]) => (
+                <option key={key} value={key}>{value}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1">Speed</label>
+            <select className="w-full p-2 text-black rounded">
+              <option value="">Select Speed</option>
+              {settings && settings.speed.map((speed) => (
+                <option key={speed} value={speed}>{speed}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-            <form className="space-y-6">
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="space-y-2">
-                  <label htmlFor="mood" className="text-sm font-medium text-gray-300">
-                    Mood
-                  </label>
-                  <input
-                    id="mood"
-                    type="text"
-                    placeholder="Describe your mood"
-                    className="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  />
-                </div>
+        <div>
+          <label className="block mb-2">Enter Text</label>
+          <textarea
+            value={data}
+            onChange={(e) => setData(e.target.value)}
+            rows={5}
+            className="w-full p-4 rounded text-black"
+            placeholder="Type something to speak..."
+          ></textarea>
+        </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="emotion" className="text-sm font-medium text-gray-300">
-                    Emotion
-                  </label>
-                  <input
-                    id="emotion"
-                    type="text"
-                    placeholder="Happy, Sad, etc."
-                    className="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="personality" className="text-sm font-medium text-gray-300">
-                    Voice Personality
-                  </label>
-                  <select
-                    id="personality"
-                    className="w-full px-4 py-3 rounded-xl bg-gray-800/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  >
-                    <option value="">Select Personality</option>
-                    <option value="professional">Professional</option>
-                    <option value="friendly">Friendly</option>
-                    <option value="energetic">Energetic</option>
-                    <option value="calm">Calm & Soothing</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="data" className="text-sm font-medium text-gray-300">
-                  Enter Your Text
-                </label>
-                <textarea
-                  value={data}
-                  onChange={(e) => setData(e.target.value)}
-                  rows={8}
-                  placeholder="Hi, tell me the text you want to convert to speech. I can handle everything from short sentences to long paragraphs with natural-sounding results..."
-                  className="w-full p-4 text-base rounded-xl bg-gray-800/50 border border-gray-600 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200"
-                  id="data"
-                  name="data"
-                />
-              </div>
-
-              <div className="text-center">
-                <button
-                  type="submit"
-                  disabled={isPlaying}
-                  className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 transition-all duration-300 text-white rounded-xl shadow-lg font-semibold transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center gap-3 mx-auto"
-                >
-                  {isPlaying ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Playing...
-                    </>
-                  ) : (
-                    <>
-                      <Volume2 className="w-5 h-5" />
-                      Convert to Speech
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-
+        <button
+          type="submit"
+          disabled={isPlaying}
+          className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded text-white font-semibold"
+        >
+          {isPlaying ? "Playing..." : "Convert to Speech"}
+        </button>
+      </form>
             <p className="mt-8 text-sm text-gray-400 text-center">
               Powered by advanced browser Speech Synthesis API for instant, high-quality voice generation
             </p>
