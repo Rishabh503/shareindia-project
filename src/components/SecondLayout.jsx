@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Volume2, Mic, Zap, Heart, Star, Play, Users, Award, Clock } from "lucide-react";
-import { SETTINGS } from "../lib/data";
+import { getData, SETTINGS } from "../lib/data";
+import microphome from "../assets/microphone.jpg"
+import sound from "../assets/sound.jpg"
+import BlurText from "./BlurText";
 
 const Layout = () => {
   const [data, setData] = useState("");
@@ -8,6 +11,7 @@ const Layout = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // getData();
     if (data === "") {
       alert("Enter the text first!");
       return;
@@ -26,9 +30,19 @@ const Layout = () => {
   };
 const [settings, setSettings] = useState(null);
 
+const handleAnimationComplete = () => {
+  console.log('Animation completed!');
+};
+
 useEffect(() => {
   // Simulate API load
-  setSettings(SETTINGS);
+
+
+fetch("http://localhost:3000/inputs/defaultInput")
+  .then((response) => response.json())
+  .then((data) => setSettings(data));
+
+  // setSettings(SETTINGS);
 }, []);
 
   const features = [
@@ -80,9 +94,25 @@ useEffect(() => {
         <div className="relative z-10 max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Transform Text into Voice
-              </h1>
+               <BlurText
+  text="Transform Text into Voice"
+  delay={150}
+  animateBy="words"
+  direction="top"
+  onAnimationComplete={handleAnimationComplete}
+ className="text-5xl md:text-7xl font-bold mb-6 text-opacity-0 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text "
+/>
+              {/* <div className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text ">
+                <BlurText
+  text="Transform Text into Voice"
+  delay={150}
+  animateBy="words"
+  direction="top"
+  onAnimationComplete={handleAnimationComplete}
+  className="text-2xl mb-8"
+/>
+            
+              </div> */}
               <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
                 Experience the power of AI-driven text-to-speech technology. Create natural, expressive audio from any text with our advanced voice synthesis platform.
               </p>
@@ -108,12 +138,12 @@ useEffect(() => {
                 className="rounded-2xl shadow-2xl transform -rotate-3 hover:rotate-0 transition-transform duration-300 mt-8"
               />
               <img
-                src="https://images.unsplash.com/photo-1��993-04-02-09-36-35?w=300&h=200&fit=crop"
+                src={microphome}
                 alt="Modern Microphone"
                 className="rounded-2xl shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-300 -mt-4"
               />
               <img
-                src="https://images.unsplash.com/photo-1��993-12-08-22-46-59?w=300&h=200&fit=crop"
+                src={sound}
                 alt="Sound Engineering"
                 className="rounded-2xl shadow-2xl transform -rotate-2 hover:rotate-0 transition-transform duration-300 mt-4"
               />
@@ -122,7 +152,7 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats Section Starts here*/}
       <section className="px-4 md:px-20 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -139,7 +169,7 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Main Form Section */}
+      {/*  Form  */}
       <section className="px-4 md:px-20 py-16">
         <div className="relative max-w-4xl mx-auto">
           <div className="bg-gradient-to-br from-gray-800/40 via-gray-900/40 to-black/40 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-gray-700/30">
@@ -150,7 +180,7 @@ useEffect(() => {
               <p className="text-gray-400">Customize your voice settings and convert your text to natural speech</p>
             </div>
 <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
           <div>
             <label className="block mb-1">Mood</label>
             <select className="w-full p-2 text-black rounded">
@@ -165,6 +195,15 @@ useEffect(() => {
             <select className="w-full p-2 text-black rounded">
               <option value="">Select Language</option>
               {settings && Object.entries(settings.language).map(([key, value]) => (
+                <option key={key} value={key}>{value}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block mb-1">Gender</label>
+            <select className="w-full p-2 text-black rounded">
+              <option value="">Select Gender</option>
+              {settings && Object.entries(settings.gender).map(([key, value]) => (
                 <option key={key} value={key}>{value}</option>
               ))}
             </select>
@@ -188,7 +227,15 @@ useEffect(() => {
             </select>
           </div>
         </div>
-
+{/* <!-- NEW FIELD HERE --> */}
+<div>
+  <label className="block mb-2">Upload Background Music (optional)</label>
+  <input
+    type="file"
+    accept="audio/*"
+    className="w-full p-3 bg-white text-black rounded cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+  />
+</div>
         <div>
           <label className="block mb-2">Enter Text</label>
           <textarea
@@ -215,7 +262,7 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features  */}
       <section className="px-4 md:px-20 py-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
